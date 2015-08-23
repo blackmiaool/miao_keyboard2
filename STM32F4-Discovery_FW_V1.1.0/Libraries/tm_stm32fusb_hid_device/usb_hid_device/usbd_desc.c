@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    usbd_desc.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    19-September-2011
+  * @version V1.1.0
+  * @date    19-March-2012
   * @brief   This file provides the USBD descriptors and string formating method.
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -48,23 +54,23 @@
   * @{
   */ 
 
-#define USBD_VID                     0x0483
-#define USBD_PID                     0x5710
+#define USBD_VID                     	0x0483
+#define USBD_PID                     	0x5710
 
-#define USBD_LANGID_STRING            0x409
-#define USBD_MANUFACTURER_STRING      "STMicroelectronics"
+#define USBD_LANGID_STRING            	0x409
+#define USBD_MANUFACTURER_STRING      	"STMicroelectronics"
 
-#define USBD_PRODUCT_HS_STRING        "Joystick in HS mode"
-#define USBD_SERIALNUMBER_HS_STRING   "00000000011B"
+#define USBD_PRODUCT_HS_STRING        	"TM USB HID device in HS mode"
+#define USBD_SERIALNUMBER_HS_STRING   	"00000000011B"
 
-#define USBD_PRODUCT_FS_STRING        "Joystick in FS Mode"
-#define USBD_SERIALNUMBER_FS_STRING   "00000000011C"
+#define USBD_PRODUCT_FS_STRING        	"TM USB HID device in FS mode"
+#define USBD_SERIALNUMBER_FS_STRING   	"00000000011C"
 
-#define USBD_CONFIGURATION_HS_STRING  "HID Config"
-#define USBD_INTERFACE_HS_STRING      "HID Interface"
+#define USBD_CONFIGURATION_HS_STRING  	"HID Config"
+#define USBD_INTERFACE_HS_STRING      	"HID Interface"
 
-#define USBD_CONFIGURATION_FS_STRING  "HID Config"
-#define USBD_INTERFACE_FS_STRING      "HID Interface"
+#define USBD_CONFIGURATION_FS_STRING  	"HID Config"
+#define USBD_INTERFACE_FS_STRING      	"HID Interface"
 /**
   * @}
   */ 
@@ -102,27 +108,24 @@ USBD_DEVICE USR_desc =
 /* USB Standard Device Descriptor */
 __ALIGN_BEGIN uint8_t USBD_DeviceDesc[USB_SIZ_DEVICE_DESC] __ALIGN_END =
   {
- 0x12,                       /*bLength */
+    0x12,                       /*bLength */
     USB_DEVICE_DESCRIPTOR_TYPE, /*bDescriptorType*/
     0x00,                       /*bcdUSB */
     0x02,
     0x00,                       /*bDeviceClass*/
     0x00,                       /*bDeviceSubClass*/
     0x00,                       /*bDeviceProtocol*/
-    0x40,                       /*bMaxPacketSize40*/
-    0x83,                       /*idVendor (0x1234)*/
-    0x04,
-    0x50,                       /*idProduct = 0x4321*/
-    0x57,
+    USB_OTG_MAX_EP0_SIZE,      /*bMaxPacketSize*/
+    LOBYTE(USBD_VID),           /*idVendor*/
+    HIBYTE(USBD_VID),           /*idVendor*/
+    LOBYTE(USBD_PID),           /*idVendor*/
+    HIBYTE(USBD_PID),           /*idVendor*/
     0x00,                       /*bcdDevice rel. 2.00*/
     0x02,
-    1,                          /*Index of string descriptor describing
-                                              manufacturer */
-    2,                          /*Index of string descriptor describing
-                                             product*/
-    3,                          /*Index of string descriptor describing the
-                                             device serial number */
-    0x01                        /*bNumConfigurations*/
+    USBD_IDX_MFC_STR,           /*Index of manufacturer  string*/
+    USBD_IDX_PRODUCT_STR,       /*Index of product string*/
+    USBD_IDX_SERIAL_STR,        /*Index of serial number string*/
+    USBD_CFG_MAX_NUM            /*bNumConfigurations*/
   } ; /* USB_DeviceDescriptor */
 
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
@@ -312,5 +315,5 @@ uint8_t *  USBD_USR_InterfaceStrDescriptor( uint8_t speed , uint16_t *length)
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

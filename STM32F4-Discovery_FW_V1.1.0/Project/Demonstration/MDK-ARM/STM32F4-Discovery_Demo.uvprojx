@@ -361,7 +361,7 @@
             <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <useXO>0</useXO>
             <v6Lang>0</v6Lang>
             <v6LangP>0</v6LangP>
@@ -369,7 +369,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F4XX MANGUSTA_DISCOVERY USE_USB_OTG_FS HSE_VALUE=8000000</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Libraries\CMSIS\Include;..\..\..\Libraries\CMSIS\ST\STM32F4xx\Include;..\..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\..\Utilities\STM32F4-Discovery;..\..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\..\Libraries\STM32_USB_Device_Library\Class\hid\inc;..\..\..\Libraries\STM32_USB_Device_Library\Core\inc</IncludePath>
+              <IncludePath>..\;..\..\..\Libraries\CMSIS\Include;..\..\..\Libraries\CMSIS\ST\STM32F4xx\Include;..\..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\..\Utilities\STM32F4-Discovery;..\..\..\Libraries\STM32_USB_OTG_Driver\inc;..\..\..\Libraries\STM32_USB_Device_Library\Class\hid\inc;..\..\..\Libraries\STM32_USB_Device_Library\Core\inc;..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -427,45 +427,15 @@
               <FileType>1</FileType>
               <FilePath>..\stm32f4xx_it.c</FilePath>
             </File>
-            <File>
-              <FileName>usbd_usr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\usbd_usr.c</FilePath>
-            </File>
-            <File>
-              <FileName>selftest.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\selftest.c</FilePath>
-            </File>
-            <File>
-              <FileName>usb_bsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\usb_bsp.c</FilePath>
-            </File>
-            <File>
-              <FileName>usbd_desc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\usbd_desc.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>STM32F4-Discovery</GroupName>
           <Files>
             <File>
-              <FileName>stm32f4_discovery_lis302dl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Utilities\STM32F4-Discovery\stm32f4_discovery_lis302dl.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4_discovery.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Utilities\STM32F4-Discovery\stm32f4_discovery.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4_discovery_audio_codec.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Utilities\STM32F4-Discovery\stm32f4_discovery_audio_codec.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -532,6 +502,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_usart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -546,46 +521,79 @@
         </Group>
         <Group>
           <GroupName>STM32_USB_OTG_Driver</GroupName>
-          <Files>
-            <File>
-              <FileName>usb_dcd_int.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_OTG_Driver\src\usb_dcd_int.c</FilePath>
-            </File>
-            <File>
-              <FileName>usb_core.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_OTG_Driver\src\usb_core.c</FilePath>
-            </File>
-            <File>
-              <FileName>usb_dcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_OTG_Driver\src\usb_dcd.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>STM32_USB_Device_Library</GroupName>
           <Files>
             <File>
-              <FileName>usbd_hid_core.c</FileName>
+              <FileName>usb_bsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_Device_Library\Class\hid\src\usbd_hid_core.c</FilePath>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usb_bsp.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_ioreq.c</FileName>
+              <FileName>usb_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_Device_Library\Core\src\usbd_ioreq.c</FilePath>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usb_core.c</FilePath>
             </File>
             <File>
-              <FileName>usbd_req.c</FileName>
+              <FileName>usb_dcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_Device_Library\Core\src\usbd_req.c</FilePath>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usb_dcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_dcd_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usb_dcd_int.c</FilePath>
             </File>
             <File>
               <FileName>usbd_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\Libraries\STM32_USB_Device_Library\Core\src\usbd_core.c</FilePath>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usbd_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_desc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usbd_desc.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_hid_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usbd_hid_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_ioreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usbd_ioreq.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_req.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usbd_req.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbd_usr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\usbd_usr.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm_stm32f4_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\tm_stm32f4_delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm_stm32f4_disco.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\tm_stm32f4_disco.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm_stm32f4_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\tm_stm32f4_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>tm_stm32f4_usb_hid_device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\tm_stm32fusb_hid_device\usb_hid_device\tm_stm32f4_usb_hid_device.c</FilePath>
             </File>
           </Files>
         </Group>

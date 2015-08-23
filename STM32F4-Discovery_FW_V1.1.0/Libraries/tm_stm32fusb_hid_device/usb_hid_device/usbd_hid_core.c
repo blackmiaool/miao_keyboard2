@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    usbd_hid_core.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    22-July-2011
+  * @version V1.1.0
+  * @date    19-March-2012
   * @brief   This file provides the HID core functions.
   *
   * @verbatim
@@ -29,14 +29,20 @@
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -153,11 +159,88 @@ __ALIGN_BEGIN static uint32_t  USBD_HID_IdleState __ALIGN_END = 0;
   #endif
 #endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */ 
 /* USB HID device Configuration Descriptor */
-const u8 KeyboardReportDescriptor[]=
+__ALIGN_BEGIN static uint8_t USBD_HID_CfgDesc[USB_HID_CONFIG_DESC_SIZ] __ALIGN_END =
 {
-    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)	//63
+  0x09, /* bLength: Configuration Descriptor size */
+  USB_CONFIGURATION_DESCRIPTOR_TYPE, /* bDescriptorType: Configuration */
+  USB_HID_CONFIG_DESC_SIZ,
+  /* wTotalLength: Bytes returned */
+  0x00,
+  0x01,         /*bNumInterfaces: 1 interface*/
+  0x01,         /*bConfigurationValue: Configuration value*/
+  0x00,         /*iConfiguration: Index of string descriptor describing
+  the configuration*/
+  0xE0,         /*bmAttributes: bus powered and Support Remote Wake-up */
+  0x32,         /*MaxPower 100 mA: this current is used for detecting Vbus*/
+  
+  /************** Descriptor of Joystick Mouse interface ****************/
+  /* 09 */
+  0x09,         /*bLength: Interface Descriptor size*/
+  USB_INTERFACE_DESCRIPTOR_TYPE,/*bDescriptorType: Interface descriptor type*/
+  0x00,         /*bInterfaceNumber: Number of Interface*/
+  0x00,         /*bAlternateSetting: Alternate setting*/
+  0x01,         /*bNumEndpoints*/
+  0x03,         /*bInterfaceClass: HID*/
+  0x00,   /*0x01*/      /*bInterfaceSubClass : 1=BOOT, 0=no boot*/
+  0x00,   /*0x02*/      /*nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse*/
+  0,            /*iInterface: Index of string descriptor*/
+  /******************** Descriptor of Joystick Mouse HID ********************/
+  /* 18 */
+  0x09,         /*bLength: HID Descriptor size*/
+  HID_DESCRIPTOR_TYPE, /*bDescriptorType: HID*/
+  0x11,         /*bcdHID: HID Class Spec release number*/
+  0x01,
+  0x00,         /*bCountryCode: Hardware target country*/
+  0x01,         /*bNumDescriptors: Number of HID class descriptors to follow*/
+  0x22,         /*bDescriptorType*/
+  HID_MOUSE_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
+  0x00,
+  /******************** Descriptor of Mouse endpoint ********************/
+  /* 27 */
+  0x07,          /*bLength: Endpoint Descriptor size*/
+  USB_ENDPOINT_DESCRIPTOR_TYPE, /*bDescriptorType:*/
+  
+  HID_IN_EP,     /*bEndpointAddress: Endpoint Address (IN)*/
+  0x03,          /*bmAttributes: Interrupt endpoint*/
+  HID_IN_PACKET, /*wMaxPacketSize: 4 Byte max */
+  0x00,
+  0x0A,          /*bInterval: Polling Interval (10 ms)*/
+  /* 34 */
+} ;
+
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
+    #pragma data_alignment=4   
+  #endif
+/* USB HID device Configuration Descriptor */
+__ALIGN_BEGIN static uint8_t USBD_HID_Desc[USB_HID_DESC_SIZ] __ALIGN_END=
+{
+  /* 18 */
+  0x09,         /*bLength: HID Descriptor size*/
+  HID_DESCRIPTOR_TYPE, /*bDescriptorType: HID*/
+  0x11,         /*bcdHID: HID Class Spec release number*/
+  0x01,
+  0x00,         /*bCountryCode: Hardware target country*/
+  0x01,         /*bNumDescriptors: Number of HID class descriptors to follow*/
+  0x22,         /*bDescriptorType*/
+  HID_MOUSE_REPORT_DESC_SIZE,/*wItemLength: Total length of Report descriptor*/
+  0x00,
+};
+#endif 
+
+
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
+    #pragma data_alignment=4   
+  #endif
+#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */  
+__ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE] __ALIGN_END =
+{
+	/* 47 */
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
     0x09, 0x06,                    // USAGE (Keyboard)
     0xa1, 0x01,                    // COLLECTION (Application)
+    0x85, 0x01,                    //   REPORT_ID (1)
     0x05, 0x07,                    //   USAGE_PAGE (Keyboard)
     0x19, 0xe0,                    //   USAGE_MINIMUM (Keyboard LeftControl)
     0x29, 0xe7,                    //   USAGE_MAXIMUM (Keyboard Right GUI)
@@ -169,15 +252,6 @@ const u8 KeyboardReportDescriptor[]=
     0x95, 0x01,                    //   REPORT_COUNT (1)
     0x75, 0x08,                    //   REPORT_SIZE (8)
     0x81, 0x03,                    //   INPUT (Cnst,Var,Abs)
-    0x95, 0x05,                    //   REPORT_COUNT (5)
-    0x75, 0x01,                    //   REPORT_SIZE (1)
-    0x05, 0x08,                    //   USAGE_PAGE (LEDs)
-    0x19, 0x01,                    //   USAGE_MINIMUM (Num Lock)
-    0x29, 0x05,                    //   USAGE_MAXIMUM (Kana)
-    0x91, 0x02,                    //   OUTPUT (Data,Var,Abs)
-    0x95, 0x01,                    //   REPORT_COUNT (1)
-    0x75, 0x03,                    //   REPORT_SIZE (3)
-    0x91, 0x03,                    //   OUTPUT (Cnst,Var,Abs)
     0x95, 0x06,                    //   REPORT_COUNT (6)
     0x75, 0x08,                    //   REPORT_SIZE (8)
     0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
@@ -186,228 +260,93 @@ const u8 KeyboardReportDescriptor[]=
     0x19, 0x00,                    //   USAGE_MINIMUM (Reserved (no event indicated))
     0x29, 0x65,                    //   USAGE_MAXIMUM (Keyboard Application)
     0x81, 0x00,                    //   INPUT (Data,Ary,Abs)
+    0xc0,                          // END_COLLECTION
+	
+	/* 54 */
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x02,                    // USAGE (Mouse)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0x09, 0x01,                    //   USAGE (Pointer)
+    0xa1, 0x00,                    //   COLLECTION (Physical)
+    0x85, 0x02,                    //     REPORT_ID (2)
+    0x05, 0x09,                    //     USAGE_PAGE (Button)
+    0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
+    0x29, 0x03,                    //     USAGE_MAXIMUM (Button 3)
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
+    0x95, 0x03,                    //     REPORT_COUNT (3)
+    0x75, 0x01,                    //     REPORT_SIZE (1)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+    0x95, 0x01,                    //     REPORT_COUNT (1)
+    0x75, 0x05,                    //     REPORT_SIZE (5)
+    0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
+    0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
+    0x09, 0x30,                    //     USAGE (X)
+    0x09, 0x31,                    //     USAGE (Y)
+    0x09, 0x38,                    //     USAGE (Wheel)
+    0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
+    0x25, 0x7f,                    //     LOGICAL_MAXIMUM (127)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x03,                    //     REPORT_COUNT (3)
+    0x81, 0x06,                    //     INPUT (Data,Var,Rel)
+    0xc0,                          //   END_COLLECTION
+    0xc0,                          // END_COLLECTION
+	
+	/* 48 */
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x05,                    // USAGE (Game Pad)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0xa1, 0x00,                    //   COLLECTION (Physical)
+    0x85, 0x03,                    //     REPORT_ID (3)
+    0x05, 0x09,                    //     USAGE_PAGE (Button)
+    0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
+    0x29, 0x10,                    //     USAGE_MAXIMUM (Button 16)
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
+    0x95, 0x10,                    //     REPORT_COUNT (16)
+    0x75, 0x01,                    //     REPORT_SIZE (1)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+    0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
+    0x09, 0x30,                    //     USAGE (X)
+    0x09, 0x31,                    //     USAGE (Y)
+    0x09, 0x32,                    //     USAGE (Z)
+    0x09, 0x33,                    //     USAGE (Rx)
+    0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
+    0x25, 0x7f,                    //     LOGICAL_MAXIMUM (127)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x04,                    //     REPORT_COUNT (4)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+    0xc0,                          //   END_COLLECTION
+    0xc0,                          // END_COLLECTION
+	
+	/* 48 */
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x05,                    // USAGE (Game Pad)
+    0xa1, 0x01,                    // COLLECTION (Application)
+    0xa1, 0x00,                    //   COLLECTION (Physical)
+    0x85, 0x04,                    //     REPORT_ID (4)
+    0x05, 0x09,                    //     USAGE_PAGE (Button)
+    0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
+    0x29, 0x10,                    //     USAGE_MAXIMUM (Button 16)
+    0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
+    0x95, 0x10,                    //     REPORT_COUNT (16)
+    0x75, 0x01,                    //     REPORT_SIZE (1)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+    0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
+    0x09, 0x30,                    //     USAGE (X)
+    0x09, 0x31,                    //     USAGE (Y)
+    0x09, 0x32,                    //     USAGE (Z)
+    0x09, 0x33,                    //     USAGE (Rx)
+    0x15, 0x81,                    //     LOGICAL_MINIMUM (-127)
+    0x25, 0x7f,                    //     LOGICAL_MAXIMUM (127)
+    0x75, 0x08,                    //     REPORT_SIZE (8)
+    0x95, 0x04,                    //     REPORT_COUNT (4)
+    0x81, 0x02,                    //     INPUT (Data,Var,Abs)
+    0xc0,                          //     END_COLLECTION
     0xc0,                           // END_COLLECTION
-	//0xc0,
-  };
-const static uint8_t USBD_HID_CfgDesc[89]  =
-{
- /***************ÅäÖÃÃèÊö·û***********************/
-    0x09,		//bLength×Ö¶Î
-    USB_CONFIGURATION_DESCRIPTOR_TYPE,		//bDescriptorType×Ö¶Î
-    //wTotalLength×Ö¶Î
-    89%128,
-    /* wTotalLength: Bytes returned */
-    89/128,
 
-    0x03,	//bNumInterfaces×Ö¶Î
-    0x01,	//bConfiguration×Ö¶Î
-    0x00,	//iConfigurationz×Ö¶Î
-    0x80,	//bmAttributes×Ö¶Î
-    0x32,	//bMaxPower×Ö¶Î
-
-    /*******************µÚÒ»¸ö½Ó¿ÚÃèÊö·û*********************/
-    0x09,	//bLength×Ö¶Î
-    0x04,	//bDescriptorType×Ö¶Î
-    0x00,	//bInterfaceNumber×Ö¶Î
-    0x00,	//bAlternateSetting×Ö¶Î
-    0x02,	//bNumEndpoints×Ö¶Î
-    0x03,	//bInterfaceClass×Ö¶Î
-    0x01,	//bInterfaceSubClass×Ö¶Î
-    0x01,	//bInterfaceProtocol×Ö¶Î
-    0x00,	//iConfiguration×Ö¶Î
-
-    /******************HIDÃèÊö·û************************/
-    0x09,	//bLength×Ö¶Î
-    0x21,	//bDescriptorType×Ö¶Î
-    0x10,	//bcdHID×Ö¶Î
-    0x01,
-    0x21,	//bCountyCode×Ö¶Î
-    0x01,	//bNumDescriptors×Ö¶Î
-    0x22,	//bDescriptorType×Ö¶Î
-
-    //bDescriptorLength×Ö¶Î¡£
-    //ÏÂ¼¶ÃèÊö·ûµÄ³¤¶È¡£ÏÂ¼¶ÃèÊö·ûÎª¼üÅÌ±¨¸æÃèÊö·û¡£
-    sizeof(KeyboardReportDescriptor)&0xFF,
-    (sizeof(KeyboardReportDescriptor)>>8)&0xFF,
-
-    /**********************ÊäÈë¶ËµãÃèÊö·û***********************/
-    0x07,	//bLength×Ö¶Î
-    0x05,	//bDescriptorType×Ö¶Î
-    0x81,	//bEndpointAddress×Ö¶Î
-    0x03,	//bmAttributes×Ö¶Î
-    0x10,	//wMaxPacketSize×Ö¶Î
-    0x00,
-    0x0A,	//bInterval×Ö¶Î
-
-    /**********************Êä³ö¶ËµãÃèÊö·û***********************/
-    0x07,	//bLength×Ö¶Î
-    0x05,	//bDescriptorType×Ö¶Î
-    0x01,	//bEndpointAddress×Ö¶Î
-    0x03,	//bmAttributes×Ö¶Î
-    0x10,	//wMaxPacketSize×Ö¶Î
-    0x00,
-    0x0A,	//bInterval×Ö¶Î
-
-    /*******************µÚ¶þ¸ö½Ó¿ÚÃèÊö·û*********************/
-    0x09,	//bLength×Ö¶Î
-    0x04,	//bDescriptorType×Ö¶Î
-    0x01,	//bInterfaceNumber×Ö¶Î
-    0x00,	//bAlternateSetting×Ö¶Î
-    0x01,	//bNumEndpoints×Ö¶Î
-    0x03,	//bInterfaceClass×Ö¶Î
-    0x01,	//bInterfaceSubClass×Ö¶Î
-    0x02,	//bInterfaceProtocol×Ö¶Î
-    0x00,	//iConfiguration×Ö¶Î
-
-    /******************HIDÃèÊö·û************************/
-    0x09,	//bLength×Ö¶Î
-    0x21,	//bDescriptorType×Ö¶Î
-    0x10,	//bcdHID×Ö¶Î
-    0x01,
-    0x21,	//bCountyCode×Ö¶Î
-    0x01,	//bNumDescriptors×Ö¶Î
-    0x22,	//bDescriptorType×Ö¶Î
-    sizeof(MouseReportDescriptor)&0xFF,		//bDescriptorLength×Ö¶Î
-    (sizeof(MouseReportDescriptor)>>8)&0xFF,
-
-    /**********************ÊäÈë¶ËµãÃèÊö·û***********************/
-    0x07,	//bLength×Ö¶Î
-    0x05,	//bDescriptorType×Ö¶Î
-    0x82,	//bEndpointAddress×Ö¶Î
-    0x03,	//bmAttributes×Ö¶Î¡£D1~D0Îª¶Ëµã´«ÊäÀàÐÍÑ¡Ôñ
-    0x40,	//wMaxPacketSize×Ö¶Î
-    0x00,
-    0x0A, 	//bInterval×Ö¶Î
-
-    /*******************µÚÈý¸ö½Ó¿ÚÃèÊö·û*********************/
-    0x09,   /* bLength: Interface Descriptor size */
-    0x04,   /* bDescriptorType: */
-    /*      Interface descriptor type */
-    0x02,   /* bInterfaceNumber: Number of Interface */
-    0x00,   /* bAlternateSetting: Alternate setting */
-    0x02,   /* bNumEndpoints*/
-    0x08,   /* bInterfaceClass: MASS STORAGE Class */
-    0x06,   /* bInterfaceSubClass : SCSI transparent*/
-    0x50,   /* nInterfaceProtocol */
-    4,          /* iInterface: */
-    /* 18 */
-    0x07,   /*Endpoint descriptor length = 7*/
-    0x05,   /*Endpoint descriptor type */
-    0x83,   /*Endpoint address (IN, address 1) */
-    0x02,   /*Bulk endpoint type */
-    0x40,   /*Maximum packet size (64 bytes) */
-    0x00,
-    0x00,   /*Polling interval in milliseconds */
-    /* 25 */
-    0x07,   /*Endpoint descriptor length = 7 */
-    0x05,   /*Endpoint descriptor type */
-    0x04,   /*Endpoint address (OUT, address 2) */
-    0x02,   /*Bulk endpoint type */
-    0x40,   /*Maximum packet size (64 bytes) */
-    0x00,
-    0x00,     /*Polling interval in milliseconds*/
-    /*32*/
-    
-    
-    
-    
-    
-    
-    
-    
-    
-//    
-//    0x09,   /* bLength: Interface Descriptor size */
-//    USB_INTERFACE_DESCRIPTOR_TYPE,  /* bDescriptorType: Interface */
-//    /* Interface descriptor type */
-//    0x03,   /* bInterfaceNumber: Number of Interface */
-//    0x00,   /* bAlternateSetting: Alternate setting */
-//    0x01,   /* bNumEndpoints: One endpoints used */
-//    0x02,   /* bInterfaceClass: Communication Interface Class */
-//    0x02,   /* bInterfaceSubClass: Abstract Control Model */
-//    0x01,   /* bInterfaceProtocol: Common AT commands */
-//    0x00,   /* iInterface: */
-//    
-//    /*Header Functional Descriptor*/
-//    0x05,   /* bLength: Endpoint Descriptor size */
-//    0x24,   /* bDescriptorType: CS_INTERFACE */
-//    0x00,   /* bDescriptorSubtype: Header Func Desc */
-//    0x10,   /* bcdCDC: spec release number */
-//    0x01,
-//    
-//    /*Call Managment Functional Descriptor*/
-//    0x05,   /* bFunctionLength */
-//    0x24,   /* bDescriptorType: CS_INTERFACE */
-//    0x01,   /* bDescriptorSubtype: Call Management Func Desc */
-//    0x00,   /* bmCapabilities: D0+D1 */
-//    0x04,   /* bDataInterface: 1 */
-//    
-//    /*ACM Functional Descriptor*/
-//    0x04,   /* bFunctionLength */
-//    0x24,   /* bDescriptorType: CS_INTERFACE */
-//    0x02,   /* bDescriptorSubtype: Abstract Control Management desc */
-//    0x02,   /* bmCapabilities */
-//    
-//    
-//    /*Union Functional Descriptor*/
-//    0x05,   /* bFunctionLength */
-//    0x24,   /* bDescriptorType: CS_INTERFACE */
-//    0x06,   /* bDescriptorSubtype: Union func desc */
-//    0x03,   /* bMasterInterface: Communication class interface */
-//    0x04,   /* bSlaveInterface0: Data Class Interface */
-//    
-//    
-//    /*Endpoint 2 Descriptor*/
-//    0x07,   /* bLength: Endpoint Descriptor size */
-//    USB_ENDPOINT_DESCRIPTOR_TYPE,   /* bDescriptorType: Endpoint */
-//    0x86,   /* bEndpointAddress: (IN2) */
-//    0x03,   /* bmAttributes: Interrupt */
-//    VIRTUAL_COM_PORT_INT_SIZE,      /* wMaxPacketSize: */
-//    0x00,
-//    0xFF,   /* bInterval: */
-//    
-//    
-//    
-//    
-//    /*Data class interface descriptor*/
-//    0x09,   /* bLength: Endpoint Descriptor size */
-//    USB_INTERFACE_DESCRIPTOR_TYPE,  /* bDescriptorType: */
-//    0x04,   /* bInterfaceNumber: Number of Interface */
-//    0x00,   /* bAlternateSetting: Alternate setting */
-//    0x02,   /* bNumEndpoints: Two endpoints used */
-//    0x0A,   /* bInterfaceClass: CDC */
-//    0x00,   /* bInterfaceSubClass: */
-//    0x00,   /* bInterfaceProtocol: */
-//    0x01,   /* iInterface: */
-//    
-//    /*Endpoint 3 Descriptor*/
-//    0x07,   /* bLength: Endpoint Descriptor size */
-//    USB_ENDPOINT_DESCRIPTOR_TYPE,   /* bDescriptorType: Endpoint */
-//    0x07,   /* bEndpointAddress: (OUT3) */
-//    0x02,   /* bmAttributes: Bulk */
-//    VIRTUAL_COM_PORT_DATA_SIZE,             /* wMaxPacketSize: */
-//    0x00,
-//    0x00,   /* bInterval: ignore for Bulk transfer */
-//    
-//    /*Endpoint 1 Descriptor*/
-//    0x07,   /* bLength: Endpoint Descriptor size */
-//    USB_ENDPOINT_DESCRIPTOR_TYPE,   /* bDescriptorType: Endpoint */
-//    0x85,   /* bEndpointAddress: (IN1) */
-//    0x02,   /* bmAttributes: Bulk */
-//    VIRTUAL_COM_PORT_DATA_SIZE,             /* wMaxPacketSize: */
-//    0x00,
-//    0x00    /* bInterval */
-} ;
-
-#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
-    #pragma data_alignment=4   
-  #endif
-#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */ 
-
-__ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE] __ALIGN_END =
-{
-  0x05,   0x01,
+/*  0x05,   0x01,
   0x09,   0x02,
   0xA1,   0x01,
   0x09,   0x01,
@@ -452,7 +391,7 @@ __ALIGN_BEGIN static uint8_t HID_MOUSE_ReportDesc[HID_MOUSE_REPORT_DESC_SIZE] __
   0x06,   0x95,
   0x01,   0xb1,
   
-  0x01,   0xc0
+  0x01,   0xc0*/
 }; 
 
 /**
@@ -485,7 +424,6 @@ static uint8_t  USBD_HID_Init (void  *pdev,
               HID_OUT_EP,
               HID_OUT_PACKET,
               USB_OTG_EP_INT);
-	
   
   return USBD_OK;
 }
@@ -566,11 +504,11 @@ static uint8_t  USBD_HID_Setup (void  *pdev,
       else if( req->wValue >> 8 == HID_DESCRIPTOR_TYPE)
       {
         
-//#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
-//        pbuf = USBD_HID_Desc;   
-//#else
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+        pbuf = USBD_HID_Desc;   
+#else
         pbuf = USBD_HID_CfgDesc + 0x12;
-//#endif 
+#endif 
         len = MIN(USB_HID_DESC_SIZ , req->wLength);
       }
       
@@ -656,4 +594,4 @@ static uint8_t  USBD_HID_DataIn (void  *pdev,
   * @}
   */ 
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
